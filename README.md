@@ -2,12 +2,13 @@
 
 This directory contains Python code and generated figures for the replication of key aspects of the Repressilator, a synthetic genetic oscillator, as originally described in:
 
-Scientists made an artificial network which is made up of proteins (regulators) controls the gene expression, and its shows oscillatory behaviour.
-
 **Original Publication:**
 > Elowitz, M. B., & Leibler, S. (2000). A synthetic oscillatory network of transcriptional regulators. *Nature*, *403*(6767), 335-338. DOI: [10.1038/35002125](https://doi.org/10.1038/35002125)
 
-## Intro 
+Scientists made an artificial network which is made up of proteins (regulators) controls the gene expression, and its shows oscillatory behaviour.
+
+
+## Introduction to the paper
 
 * Cells  consists diff. biomolecules which make some sorts of network to work together but we still didnot understand the "design principle" till now.
 * The main aim is to implement an oscillation they designed and made an artificial network.
