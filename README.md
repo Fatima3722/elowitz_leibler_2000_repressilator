@@ -55,10 +55,15 @@ The Python scripts in this directory aim to:
   dmi/dt = -mi + alpha/(1+Pj ^^n) + alpha0
 
   dmi/dt = mrna conc.
+  
   -mi = Degradation of mrna
+  
   alpha = Max. production rate
-  Pj = the repressor protein repressing "i" mrna.
+  
+  Pj = the repressor protein repressing "i" mrna
+  
   alpha0 = Leakiness
+
   n = Hill coeff. ( Cooperative n>1)
 
   Protein Equation
