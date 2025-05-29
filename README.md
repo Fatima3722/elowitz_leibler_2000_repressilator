@@ -71,6 +71,8 @@ The Python scripts in this directory aim to:
   dpi/dt = -beta(Pi - Mi)
 
   dPi/dt = Change in rate of protein concentration
+
+
   Beta = Ratio of protein degradation rate to mRNA degradation rate
 
   * Time is rescaled in the unit of mrna lifetime
