@@ -1,6 +1,6 @@
 # Stochastic Repressilator Simulation
 
-This script (`repressilator_stochastic.py`) simulates the Elowitz & Leibler (2000) Repressilator incorporating molecular noise, using Stochastic Differential Equations (SDEs).
+This script (`repressilator_stochastic.ipyb`) simulates the Elowitz & Leibler (2000) Repressilator incorporating molecular noise, using Stochastic Differential Equations (SDEs).
 
 ## Script Function
 
