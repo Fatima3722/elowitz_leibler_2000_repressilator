@@ -1,144 +1,120 @@
 # elowitz_leibler_2000_repressilator
 
-This directory contains Python code and generated figures for the replication of key aspects of the Repressilator, a synthetic genetic oscillator, as originally described in:
+# Repressilator Model Replication: Elowitz & Leibler (2000) - Detailed Analysis
+
+This document provides a detailed analysis and replication of the Repressilator genetic oscillator, as originally described in:
 
 **Original Publication:**
 > Elowitz, M. B., & Leibler, S. (2000). A synthetic oscillatory network of transcriptional regulators. *Nature*, *403*(6767), 335-338. DOI: [10.1038/35002125](https://doi.org/10.1038/35002125)
 
-Scientists made an artificial network which is made up of proteins (regulators) controls the gene expression, and its shows oscillatory behaviour.
+## Introduction to the Elowitz & Leibler (2000) Repressilator
+
+The 2000 *Nature* paper by Michael Elowitz and Stanislas Leibler marked a significant milestone in the nascent field of synthetic biology. Their work was driven by a desire to understand the "design principles" underlying the complex networks of interacting biomolecules that govern cellular functions. Instead of solely analyzing existing natural networks, they took an engineering approach: to design and construct an artificial network to perform a specific, predictable function.
+
+Key aspects of their work and the Repressilator include:
+
+*   **Addressing Network Complexity:Cells consist of diverse biomolecules forming intricate networks that carry out essential life processes. However, at the time, a deep understanding of the fundamental rules or "design principles" dictating how these intracellular networks function remained elusive, despite quantitative analysis of simpler systems.
+*   **Rational Design of an Oscillator: The central aim of their research was to implement a synthetic genetic circuit capable of producing sustained oscillations in gene expression. This served as a test case for rational network design.
+*   **The Repressilator Circuit:** They engineered a network using three transcriptional repressor systems that were not part of any known natural biological clock in *E. coli*:
+    *   **LacI** (from the *E. coli* lactose operon)
+    *   **TetR** (from the tetracycline-resistance transposon Tn10)
+    *   **cI** (from bacteriophage lambda)
+    These were arranged in a cyclic negative feedback loop: LacI represses *tetR* gene expression, the TetR protein represses *cI* gene expression, and the CI protein, in turn, represses *lacI* gene expression, completing the cycle. They termed this network the "repressilator."
+*   **GFP Reporter System:** To visualize the state of the oscillator, the network was designed to periodically induce the synthesis of Green Fluorescent Protein (GFP). GFP fluoresces under green light, allowing scientists to monitor when a linked promoter (in this case, one controlled by TetR) was active, thereby reflecting the oscillatory state of the repressilator.
+*   **Experimental Observations and the Role of Noise:**
+    *   The oscillations they observed in individual *E. coli* cells typically had periods of hours, significantly longer than the cell division cycle, meaning the oscillator's state was heritable.
+    *   A crucial and widely discussed finding was the **significant stochasticity** or "noise" in the system. Individual cells exhibited considerable variability in the period (timing) and amplitude (intensity) of the GFP fluorescence oscillations. This highlighted that even rationally designed synthetic circuits are subject to the inherent randomness of molecular processes within living cells.
+
+This work was foundational in demonstrating that new cellular behaviors could be engineered from well-characterized parts and also underscored the importance of considering stochastic effects in biological systems.
+
+## Replication Objective
+My objective was to replicate and analyze the Repressilator model by developing two computational models in Python:
+1.  A **deterministic ODE-based model** to understand the idealized system dynamics.
+2.  A **stochastic SDE-based model** to investigate the impact of molecular noise.
+
+The Python scripts and specific operational details for these models can be found in their respective subdirectories:
+*   [Deterministic Model Code & Details](deterministic_model/README.md)
+*   [Stochastic Model Code & Details](stochastic_model/README.md)
+
+## Core Model Formulation (Based on Elowitz & Leibler, Box 1)
+The Repressilator dynamics are modeled by a system of equations for three mRNA species (`m_i`) and their corresponding proteins (`p_i`).
+
+**mRNA Equations (ODE/SDE Drift):**
+
+dm_i/dt = -m_i + α / (1 + p_j^n) + α_0
+
+*   `dm_i/dt`: Rate of change of mRNA `i`.
+*   `-m_i`: mRNA degradation.
+*   `α / (1 + p_j^n)`: Repressible mRNA production (Hill function).
+*   `α_0`: Basal (leaky) transcription.
+*   `p_j`: Concentration of the protein repressing mRNA `i`.
+
+**Protein Equations (ODE Drift):**
+
+dp_i/dt = -β * (p_i - m_i)
+
+*   `dp_i/dt`: Rate of change of protein `i`.
+*   `-β*p_i`: Protein degradation.
+*   `β*m_i`: Protein production from mRNA.
+
+**Protein Equations (SDE - including stochastic term):**
+
+dp_i = [-β * (p_i - m_i)] dt + noise_coeff * sqrt(p_i_effective) * dW_i
 
 
-## Introduction to the paper
+*   The first term is the deterministic drift.
+*   The second term is the stochastic diffusion, representing noise.
 
-* Cells  consists diff. biomolecules which make some sorts of network to work together but we still didnot understand the "design principle" till now.
-* The main aim is to implement an oscillation they designed and made an artificial network.
-* They used three trancriptional repressor system which are not part of natural biological clock and they created an oscillation network from it in ecoli and named it "repressilator".
-* This repressilator network periodically make GFP. GFP is a protein which shown flouroscence in green light.So that scientist can know when network is "on".
-* This oscillation is about an hour long which is longer than the divison of bacteria that means it get passed onto their offspring.
-* The observed some noise in their too. 
- 
+## Parameter Justification ("Why I Chose These Specific Settings")
 
-## Replication Goals
+The parameters used across both the deterministic and stochastic simulations are chosen to align with the dimensionless model and illustrative values discussed in the Elowitz & Leibler (2000) paper, particularly Box 1 and the Figure 1c caption. This ensures that the simulations are grounded in the original work's context.
 
-The Python scripts in this directory aim to:
-1.  Simulate the **deterministic behavior** of the Repressilator model using Ordinary Differential Equations (ODEs) based on the parameters and model structure described in Box 1 of the paper.
-2.  Simulate a **stochastic version** of the Repressilator, incorporating state-dependent noise via the Euler-Maruyama method, to illustrate the impact of molecular noise on the oscillations, a key experimental finding of the paper.
+*   **`beta = 0.2` (`β` - Ratio of Protein to mRNA Degradation Rates):**
+    This dimensionless parameter is critical as it defines the relative stability of proteins versus their mRNA. The paper (Figure 1c caption) provides example half-lives: protein half-life ≈ 10 minutes, and mRNA half-life ≈ 2 minutes. The ratio of their degradation rate constants (`k_prot / k_mRNA`) is then `(ln(2)/10 min) / (ln(2)/2 min) = 2/10 = 0.2`. A `β < 1` (proteins more stable than mRNA) is generally conducive to oscillations in this type of negative feedback loop, and this value helps achieve a period consistent with the paper's timescale.
 
-## Network Design
+*   **`n = 2` (Hill Coefficient):**
+    The Hill coefficient `n` describes the cooperativity or steepness of the repression. Elowitz & Leibler used `n=2` in their deterministic simulation shown in Figure 1c (left panel). A value greater than 1 signifies cooperative binding of the repressor (e.g., as a dimer) or multiple binding sites contributing to repression. This cooperativity results in a more switch-like response of gene expression to repressor concentration, which is a key factor in enabling and stabilizing oscillations. Non-cooperative repression (`n=1`) makes oscillations much harder to achieve or sustain.
 
-![rps](https://github.com/user-attachments/assets/ec0972be-6a4f-4ce9-ac96-550dd6391bb2)
+*   **`alpha_0 = alpha * 0.001` (`α_0` - Basal "Leaky" Transcription Rate):**
+    Biological promoters are rarely perfectly "off." The Figure 1c caption in the paper indicates a repressed (basal) promoter activity of approximately 5 × 10⁻⁴ transcripts/s, while the fully induced (derepressed) activity is 0.5 transcripts/s. This represents a leakiness ratio of `(5 × 10⁻⁴) / 0.5 = 0.001`, or 1/1000th. Therefore, the dimensionless leakiness parameter `α_0` was set to `0.001 * α` to reflect this observed basal activity. Some leakiness is realistic, though too much can dampen or eliminate oscillations.
 
-* LacI represses tetR represses cl(lambda phage) represses LacI.
-* This negative feedback loop with time produces oscillations.
+*   **`alpha = 50` (`α` - Maximum Dimensionless Transcription Rate):**
+    The parameter `α` represents the maximum dimensionless rate of mRNA production from a promoter when it is not being repressed. Once `β`, `n`, and the `α_0/α` ratio were established based on the paper, `α=50` was selected. This choice was guided by several factors:
+    1.  **Stability Analysis:** Concepts from Figure 1b in their paper (the stability diagram) suggest that for `β=0.2` and `n=2`, `α` needs to be above a certain threshold to enter the oscillatory regime.
+    2.  **Amplitude:** `α=50` yields dimensionless protein amplitudes in the simulation that, when considered with the paper's suggested K<sub>M</sub> of approximately 40 monomers per cell for half-maximal repression, would translate to physiologically plausible protein numbers (e.g., peaks of tens to a few hundreds of molecules).
+    3.  **Clarity of Oscillations:** This value produces clear, well-defined oscillations in the deterministic model. The primary role of `α` here, once oscillations are established, is to scale their amplitude.
 
-## Oscillations are favoured by
+*   **`noise_coeff = 0.5` (Stochastic Model - Noise Intensity):**
+    This parameter scales the magnitude of the state-dependent noise term (`sqrt(protein_concentration) * dW_i`) in the stochastic simulation. A value of `0.5` was chosen through empirical observation of simulation outputs. It introduces a level of stochasticity that is clearly visible, causing significant variability in oscillation amplitude and period, without completely destabilizing the oscillatory behavior or making the trajectories entirely chaotic over the simulated timeframe. This allows for a qualitative comparison with the noisy experimental traces and stochastic simulations presented by Elowitz & Leibler.
 
-* Strong Promoters - For the promoters they choosed Hybrid promoter
-* Efficient ribosome binding site
-* Tight transcriptional repression, decreases leakiness
-* Cooperative Repression (repressor mol. together "off" gene effectively).
-* Protein and decay mrna rate are comparable to overcome this problem as the mrna lifetime is 2 min. to match with protein they put SSRA RNA seq. at the carboxy terminal tag so that proteases recognize and degrade them .
+*   **Time Scaling for Plotting:**
+    In the simulations, time (`t`) is dimensionless, scaled by the mRNA lifetime as per Box 1. For plotting the results in a more intuitive way, this dimensionless time is converted to minutes by multiplying by 2. This interpretation assumes that one unit of dimensionless time corresponds to the mRNA half-life of 2 minutes (given in the paper's Figure 1c caption), a common convention for presenting such models.
 
-## EXP. SETUP
-* Low copy plasmid of (Repressilator) so that it wont interfere normal functioning of ecoli.
-* High copy no. of Reporter plasmid for visualisation.
-* IPTG interferes LacI, They used pulse of IPTG to synchronize all cells at one start point.
-* When they visualised Ecoli **MC4100** they saw damped oscillation when they grew it in IPTG media and transferred back into normal media.
-* As population dont have apparent way to sync. So they used microscope to study single cell their flouroscence intensity.
+## Interpretation of Simulation Results
 
-## Network Structure
+The simulations performed provide insights into both the idealized and the more realistic noisy behavior of the Repressilator. The generated plots can be found in the `figures/` subdirectories of the `deterministic_model/` and `stochastic_model/` folders.
 
-* The three repressor proteins (Pi) and their corresponding mRNA conc. are continous variable ( i = LacI, tetR, cl ).
+**Deterministic Simulation Findings (see `deterministic_model/figures/deterministic_oscillation.png`):**
 
-  mRNA Equations
+*   The Ordinary Differential Equation (ODE) model successfully demonstrates **sustained, regular oscillations** in the concentrations of all three repressor proteins (LacI, TetR, λ CI).
+*   A key characteristic is the consistent **~120-degree phase shift** observed between the protein species. This phase relationship is a direct consequence of the three-node cyclic negative feedback architecture: as one repressor's concentration peaks, it actively suppresses the production of the next protein in the cycle, which in turn allows the third protein (repressed by the second) to rise.
+*   With the default parameters, the period of these idealized oscillations is calculated to be approximately **[Your Calculated Mean Period from deterministic simulation, e.g., 65-70] minutes**.
+*   This outcome confirms the theoretical capability of the Repressilator's negative feedback design to generate oscillations, aligning well with the deterministic simulation presented by Elowitz & Leibler in their Figure 1c (left panel).
 
-  dmi/dt = -mi + alpha/(1+Pj ^^n) + alpha0
+**Stochastic Simulation Findings (see `stochastic_model/figures/stochastic_oscillation.png`):**
 
-  dmi/dt = mrna conc.
-  
-  -mi = Degradation of mrna
-  
-  alpha = Max. production rate
-  
-  Pj = the repressor protein repressing "i" mrna
-  
-  alpha0 = Leakiness
-
-  n = Hill coeff. ( Cooperative n>1)
-
-  Protein Equation
-
-  dpi/dt = -beta(Pi - Mi)
-
-  dPi/dt = Change in rate of protein concentration
+*   The Stochastic Differential Equation (SDE) model, which incorporates state-dependent noise, reveals a starkly different picture. The oscillations exhibit **significant variability in both amplitude and period**.
+*   Successive peaks for the same protein species vary considerably in height, and the time intervals between these peaks fluctuate, demonstrating **phase diffusion**. The trajectories are inherently jagged due to the continuous random perturbations.
+*   This noisy, irregular behavior qualitatively mirrors the **experimental observations** of GFP fluorescence in individual *E. coli* cells (Figure 2 in Elowitz & Leibler) and is also consistent with their own **stochastic simulations** (Figure 1c, right panel).
+*   This highlights the profound impact of intrinsic molecular noise on the circuit's *in vivo* behavior, causing deviations from the perfect periodicity predicted by the deterministic model.
 
 
-  Beta = Ratio of protein degradation rate to mRNA degradation rate
+## Overall Conclusion from Replications
 
-  * Time is rescaled in the unit of mrna lifetime
+These computational replications of the Elowitz & Leibler (2000) Repressilator provide several key insights:
 
-## Objective
-
-My objective was to replicate and analyze the Elowitz and Leibler (2000) Repressilator model. To do this, I developed two computational models in Python: a deterministic ODE-based model to understand the idealized system dynamics, and a stochastic SDE-based model to investigate the impact of molecular noise.
-
-1. Deterministic Model:
-
-  * The deterministic model directly implements the system of six coupled Ordinary Differential Equations outlined in Box 1 of the Elowitz & Leibler paper. These equations describe the rate of change for the concentrations of three mRNAs (m1, m2, m3 for LacI, TetR, λ CI respectively) and their corresponding proteins (p1, p2, p3).
-  * The core repressive interactions are modeled using Hill functions of the form α / (1 + P_repressor^n), where P_repressor is the dimensionless concentration of the repressing protein. This term is augmented by α_0 to account for basal transcriptional leakiness.
-  * Protein synthesis is proportional to mRNA concentration, and both mRNA and protein species undergo first-order degradation. The system was solved numerically using scipy.integrate.solve_ivp with the 'RK45' adaptive step-size algorithm, which is well-suited for such non-linear ODE systems.
-   
-## Why I Chose These Specific "Settings" (Parameters):
-
-beta = 0.2: This number, β, is very important. It's the protein breakdown speed divided by the mRNA breakdown speed. In their paper (Figure 1c caption), they mention proteins lasting about 10 minutes and mRNA about 2 minutes. If you calculate that ratio, you get 0.2. Using this value helps get the blinking speed (the period) into a range that makes sense with their experiments.
-
-n = 2 (Hill Coefficient): They used n=2 in their own simulation (Figure 1c left). This n tells you how strongly the proteins 'cooperate' to stop the next gene. A value of 2 means there's some cooperation, which makes the 'on-off' switch a bit sharper and helps the system oscillate better than if n was just 1.
-
-alpha_0 = alpha * 0.001 (Tiny "Leak"): Their Figure 1c caption also implies that even when a gene is 'off,' it's still about 1/1000th as active as when it's fully 'on.' So, I set my α_0 (the leakiness) to be 0.001 times whatever α (the max production rate) was.
-
-alpha = 50 (Max Production Speed): α is how fast mRNA gets made when there's no 'stop' signal. Once I had β, n, and the α_0/α ratio figured out, I chose α=50. Their theory (Figure 1b) suggests that with these other settings, a value like this should make it oscillate. It also gives protein amounts in my simulation that seem reasonable if you think about their K<0xE2><0x82><0x82><0x82>M value of about 40 molecules. The main thing α does here is set how 'high' the blinks go.
-
-Time Scale: When I plot it, the time axis is in minutes. I converted it from the simulation's 'math time' by multiplying by 2. This is like saying each 'math time unit' is 2 minutes long, which matches their mRNA half-life and is a common way to show these plots.
-
-Result-
-
- we can clearly see the three proteins going up and down in these nice, smooth, regular waves.
- And look how they're out of sync – LacI peaks, then TetR, then CI. It's about a 120-degree difference, which is exactly what we expect from that three-part cycle.
- The blinking happens about every [calculated period, e.g., 65-70] minutes. The speed is mostly set by that β value, but n and α play a part too.
- This plot really confirms that their design, on paper, should totally work to create these oscillations, just like their own theoretical plot (Figure 1c, left) showed.
-
-2. Stochastic Model-
-
-  Building Model
-
-  * Next, I wanted to see what happens when you add the randomness that's always there in real cells. So, I made a 'stochastic' version. The basic math for how proteins are made and 
-    stopped is the same as before.
-  * But this time, I added a 'random nudge' term to the protein equations. This nudge is noise_coeff * sqrt(P_effective) * dW. P_effective is just the amount of protein (making sure 
-    it's not negative), dW is a small random number, and noise_coeff controls how big these random nudges are.
-  * Making the noise depend on the square root of the protein amount is a common way to mimic 'intrinsic noise' the idea that when you have more molecules, the random fluctuations can 
-    be bigger in absolute terms. It's related to something called the Chemical Langevin Equation.
-  * To solve these equations with randomness, I used a method called Euler-Maruyama.
-
-    noise_coeff = 0.5: I set this noise_coeff to 0.5. I tried a few values, and this one was good because it made the randomness clearly visible we could see it messing with the 
-    blinking but it didn't completely break the oscillations during the simulation. I wanted it to look a bit like the noisy plots in their paper.
-
-    Results-
-
-    * The height of the blinks (amplitude) is all over the place. Some LacI peaks are tall, some are short.
-   * The timing between blinks (period) is also really irregular. It's not a steady rhythm anymore.
-   * And the lines themselves are all jagged from those constant random effects.
-   * This kind of messy but still sort-of-blinking behavior is exactly what Elowitz and Leibler saw in their actual experiments with bacteria (their Figure 2), and it also looks like 
-     their own noisy simulation (Figure 1c, right).
-
-
-## Conclusion
-
-  * First, my simulation proved that the Repressilator design, based on their math, really should create regular oscillations.
-  * Then, my  simulation proved that when you add in the kind of molecular noise that's always present in cells, you get those irregular, variable blinks. This was a huge point in 
-    their paper: they designed something to work one way, but the cell's own randomness changed how it actually performed.
-  * So, doing these simulations helped me see how their design works in theory, and then how noise makes it behave like it did in their real experiments. It really shows why their 
-    paper was so important for understanding both how to build new things in cells and how tricky it can be because of that natural randomness.
- 
-
-
-
+1.  **Validation of Design Principle:** The deterministic simulation robustly verifies that the rationally designed three-gene negative feedback architecture is, in theory, capable of producing sustained and regular oscillations. This supports the core premise of their work on engineering predictable dynamic behavior.
+2.  **Impact of Stochasticity:** The stochastic simulation vividly demonstrates the critical role of molecular noise. The introduction of randomness, even in an approximated form, transforms the idealized, regular oscillations into irregular patterns with significant variability in amplitude and period. This aligns directly with the central experimental findings of Elowitz & Leibler, who observed such noisy behavior in living cells.
+3.  **Understanding Biological Reality:** By comparing the deterministic and stochastic outputs, these simulations helped me appreciate the difference between an idealized theoretical model and the more complex, noisy reality of cellular processes. It underscores why Elowitz and Leibler's paper was so important: it not only showcased a successful synthetic design but also brought to the forefront the fundamental challenge of stochasticity in biological engineering and function.
+4.  **Appreciation for the Original Work:** Replicating these models deepened my understanding of the careful parameter considerations, the theoretical underpinnings, and the experimental challenges detailed in the original paper. It truly highlights the significance of their contribution to synthetic biology.
 
