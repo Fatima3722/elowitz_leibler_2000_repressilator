@@ -1,6 +1,5 @@
-# elowitz_leibler_2000_repressilator
 
-# Repressilator Model Replication: Elowitz & Leibler (2000) - Detailed Analysis
+# Repressilator Model Replication: Elowitz & Leibler (2000) 
 
 This document provides a detailed analysis and replication of the Repressilator genetic oscillator, as originally described in:
 
