@@ -15,7 +15,7 @@ This script (`repressilator_stochastic.ipyb`) simulates the Elowitz & Leibler (2
 2.  Navigate to this `stochastic_model/` directory.
 3.  Execute:
     ```bash
-    python repressilator_stochastic.py
+    python repressilator_stochastic.ipyb
     ```
 
 ## Key Parameters (Defaults in Script)
