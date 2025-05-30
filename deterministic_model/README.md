@@ -1,6 +1,6 @@
 # Deterministic Repressilator Simulation
 
-This script (`repressilator_deterministic.py`) simulates the idealized, noise-free behavior of the Elowitz & Leibler (2000) Repressilator using Ordinary Differential Equations (ODEs).
+This script (`repressilator_deterministic.ipyb`) simulates the idealized, noise-free behavior of the Elowitz & Leibler (2000) Repressilator using Ordinary Differential Equations (ODEs).
 
 ## Script Function
 
@@ -15,7 +15,7 @@ This script (`repressilator_deterministic.py`) simulates the idealized, noise-fr
 2.  Navigate to this `deterministic_model/` directory.
 3.  Execute:
     ```bash
-    python repressilator_deterministic.py
+    python repressilator_deterministic.ipyb
     ```
 
 ## Key Parameters (Defaults in Script)
