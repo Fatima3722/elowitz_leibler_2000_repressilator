@@ -12,14 +12,14 @@ The 2000 *Nature* paper by Michael Elowitz and Stanislas Leibler marked a signif
 
 Key aspects of their work and the Repressilator include:
 
-*   **Addressing Network Complexity:Cells consist of diverse biomolecules forming intricate networks that carry out essential life processes. However, at the time, a deep understanding of the fundamental rules or "design principles" dictating how these intracellular networks function remained elusive, despite quantitative analysis of simpler systems.
-*   **Rational Design of an Oscillator: The central aim of their research was to implement a synthetic genetic circuit capable of producing sustained oscillations in gene expression. This served as a test case for rational network design.
+*   Cells consist of diverse biomolecules forming intricate networks that carry out essential life processes. However, at the time, a deep understanding of the fundamental rules or "design principles" dictating how these intracellular networks function remained elusive, despite quantitative analysis of simpler systems.
+*   The central aim of their research was to implement a synthetic genetic circuit capable of producing sustained oscillations in gene expression. This served as a test case for rational network design.
 *   **The Repressilator Circuit:** They engineered a network using three transcriptional repressor systems that were not part of any known natural biological clock in *E. coli*:
     *   **LacI** (from the *E. coli* lactose operon)
     *   **TetR** (from the tetracycline-resistance transposon Tn10)
     *   **cI** (from bacteriophage lambda)
     These were arranged in a cyclic negative feedback loop: LacI represses *tetR* gene expression, the TetR protein represses *cI* gene expression, and the CI protein, in turn, represses *lacI* gene expression, completing the cycle. They termed this network the "repressilator."
-*   **GFP Reporter System:** To visualize the state of the oscillator, the network was designed to periodically induce the synthesis of Green Fluorescent Protein (GFP). GFP fluoresces under green light, allowing scientists to monitor when a linked promoter (in this case, one controlled by TetR) was active, thereby reflecting the oscillatory state of the repressilator.
+*    To visualize the state of the oscillator, the network was designed to periodically induce the synthesis of Green Fluorescent Protein (GFP). GFP fluoresces under green light, allowing scientists to monitor when a linked promoter (in this case, one controlled by TetR) was active, thereby reflecting the oscillatory state of the repressilator.
 *   **Experimental Observations and the Role of Noise:**
     *   The oscillations they observed in individual *E. coli* cells typically had periods of hours, significantly longer than the cell division cycle, meaning the oscillator's state was heritable.
     *   A crucial and widely discussed finding was the **significant stochasticity** or "noise" in the system. Individual cells exhibited considerable variability in the period (timing) and amplitude (intensity) of the GFP fluorescence oscillations. This highlighted that even rationally designed synthetic circuits are subject to the inherent randomness of molecular processes within living cells.
@@ -97,7 +97,7 @@ The simulations performed provide insights into both the idealized and the more 
 
 *   The Ordinary Differential Equation (ODE) model successfully demonstrates **sustained, regular oscillations** in the concentrations of all three repressor proteins (LacI, TetR, λ CI).
 *   A key characteristic is the consistent **~120-degree phase shift** observed between the protein species. This phase relationship is a direct consequence of the three-node cyclic negative feedback architecture: as one repressor's concentration peaks, it actively suppresses the production of the next protein in the cycle, which in turn allows the third protein (repressed by the second) to rise.
-*   With the default parameters, the period of these idealized oscillations is calculated to be approximately **[Your Calculated Mean Period from deterministic simulation, e.g., 65-70] minutes**.
+*   With the default parameters, the period of these idealized oscillations is calculated to be approximately **[Calculated Mean Period from deterministic simulation, 65-70] minutes**.
 *   This outcome confirms the theoretical capability of the Repressilator's negative feedback design to generate oscillations, aligning well with the deterministic simulation presented by Elowitz & Leibler in their Figure 1c (left panel).
 
 **Stochastic Simulation Findings (see `stochastic_model/figures/stochastic_oscillation.png`):**
@@ -112,8 +112,8 @@ The simulations performed provide insights into both the idealized and the more 
 
 These computational replications of the Elowitz & Leibler (2000) Repressilator provide several key insights:
 
-1.  **Validation of Design Principle:** The deterministic simulation robustly verifies that the rationally designed three-gene negative feedback architecture is, in theory, capable of producing sustained and regular oscillations. This supports the core premise of their work on engineering predictable dynamic behavior.
-2.  **Impact of Stochasticity:** The stochastic simulation vividly demonstrates the critical role of molecular noise. The introduction of randomness, even in an approximated form, transforms the idealized, regular oscillations into irregular patterns with significant variability in amplitude and period. This aligns directly with the central experimental findings of Elowitz & Leibler, who observed such noisy behavior in living cells.
-3.  **Understanding Biological Reality:** By comparing the deterministic and stochastic outputs, these simulations helped me appreciate the difference between an idealized theoretical model and the more complex, noisy reality of cellular processes. It underscores why Elowitz and Leibler's paper was so important: it not only showcased a successful synthetic design but also brought to the forefront the fundamental challenge of stochasticity in biological engineering and function.
-4.  **Appreciation for the Original Work:** Replicating these models deepened my understanding of the careful parameter considerations, the theoretical underpinnings, and the experimental challenges detailed in the original paper. It truly highlights the significance of their contribution to synthetic biology.
+1.  The deterministic simulation verifies that the designed three-gene negative feedback architecture is, in theory, capable of producing sustained and regular oscillations. This supports the core premise of their work on engineering predictable dynamic behavior.
+2.  The stochastic simulation demonstrates the critical role of molecular noise. The introduction of randomness, even in an approximated form, transforms the idealized, regular oscillations into irregular patterns with significant variability in amplitude and period. This aligns directly with the central experimental findings of Elowitz & Leibler, who observed such noisy behavior in living cells.
+3.  By comparing the deterministic and stochastic outputs, these simulations helped me appreciate the difference between an idealized theoretical model and the more complex, noisy reality of cellular processes. It underscores why Elowitz and Leibler's paper was so important: it not only showcased a successful synthetic design but also brought to the forefront the fundamental challenge of stochasticity in biological engineering and function.
+4. Replicating these models deepened my understanding of the careful parameter considerations, the theoretical underpinnings, and the experimental challenges detailed in the original paper. It truly highlights the significance of their contribution to synthetic biology.
 
